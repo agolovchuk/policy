@@ -1,0 +1,21 @@
+// @flow
+
+export type AccessLevelType = boolean | number | Array<number> | (n: number) => boolean;
+
+export type Dictionary<D: string> = {|
+  +[key: D]: number
+|};
+
+export type PoliciesType = number | Array<number>;
+
+export type PolycyParams<D: string> = Array<D | Array<D>>;
+
+export type RulesType<T: string> = {|
+  +[key: T]: {
+    (): boolean,
+  }
+|}
+
+export type RilesDict<T: string> = {|
+  +[key: T]: T,
+|};
