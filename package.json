@@ -1,6 +1,6 @@
 {
   "name": "bitmask-policy",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "Policy",
   "main": "index.js",
   "scripts": {
