@@ -1,0 +1,12 @@
+{
+  "parser": "babel-eslint",
+  "env": {
+    "node": true,
+    "browser": false,
+    "jest": true
+  },
+  "plugins": [
+    "flowtype",
+    "jest"
+  ]
+}

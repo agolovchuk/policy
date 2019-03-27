@@ -1,0 +1,8 @@
+/__mock__/*
+/node_modules
+/lib
+/esm
+/coverage
+*.log
+.idea
+.vscode
