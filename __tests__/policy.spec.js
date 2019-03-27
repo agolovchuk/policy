@@ -1,8 +1,8 @@
-import * as rf from './index';
+import * as rf from '../src';
 
 const A = 1 << 5; // 100000
-const B = 17;     // 010001
-const C = 31;     // 011111
+const B = 17; // 010001
+const C = 31; // 011111
 
 
 describe('Restriction', () => {
@@ -13,17 +13,17 @@ describe('Restriction', () => {
     'guest_price',
   ];
   const MASKS = {
-    guest_name: 1,          // 0001
-    arrival_time: 1 << 1,   // 0010
+    guest_name: 1, // 0001
+    arrival_time: 1 << 1, // 0010
     departure_time: 1 << 2, // 0100
-    guest_price: 1 << 3,    // 1000
+    guest_price: 1 << 3, // 1000
   };
 
   it('is function', () => {
     expect(rf.is(A, 32)).toBeTruthy();
     expect(rf.is(A, 31)).toBeFalsy();
-    expect(rf.is(128, 191)).toBeTruthy(); // 10000000
-                                          // 10111111
+    expect(rf.is(128, 191)).toBeTruthy(); /* 10000000
+                                             10111111 */
     expect(rf.is(191, 128)).toBeFalsy();
   });
 
@@ -59,5 +59,4 @@ describe('Restriction', () => {
     expect(rf.check(undefined, 128)).toBeFalsy();
     expect(rf.check(undefined, undefined)).toBeFalsy();
   });
-
 });

@@ -1,19 +1,32 @@
-// @flow
+/* @flow */
 
-import type {
-  AccessLevelType,
-  Dictionary,
-  PoliciesType,
-  PolycyParams,
-  RulesType,
-} from './types.js.flow';
+export type AccessLevelType = boolean | number | $ReadOnlyArray<number> | (n: number) => boolean;
 
-type RU<D> = (...args: mixed[]) => RulesType<D>
+export type Dictionary<D: string> = {|
+  +[key: D]: number
+|};
+
+export type PoliciesType = number | $ReadOnlyArray<number>;
+
+export type PolycyParams<D: string> = $ReadOnlyArray<D | $ReadOnlyArray<D>>;
+
+export type RulesType<T: string> = {|
+  +[key: T]: {
+    (): boolean,
+  }
+|}
+
+export type RilesDict<T: string> = {|
+  +[key: T]: T,
+|};
+
+
+type RU<D> = (...args: $ReadOnlyArray<mixed>) => RulesType<D>
 
 type AR<D> = {|
   dictionary: Dictionary<D>,
   restriction: {
-    (...arg: mixed[]): number,
+    (...arg: $ReadOnlyArray<mixed>): number,
   },
   policy: {
     (...arg: PolycyParams<D>): PoliciesType,
@@ -27,29 +40,29 @@ export function is(mask: number, value: number): boolean {
   return mask === (mask & value);
 }
 
-export function checkArray(masks: Array<number>, value: number): boolean {
+export function checkArray(masks: $ReadOnlyArray<number>, value: number): boolean {
   return masks.some(a => is(a, value));
 }
 
 export function check<L: AccessLevelType>(accessLevel: L, userRights: number): boolean {
   if (typeof accessLevel === 'boolean') {
     return accessLevel;
-  } else if (typeof accessLevel === 'function') {
+  } if (typeof accessLevel === 'function') {
     return accessLevel(userRights);
-  } else if (typeof accessLevel === 'object' && Array.isArray(accessLevel)) {
+  } if (typeof accessLevel === 'object' && Array.isArray(accessLevel)) {
     return checkArray(accessLevel, userRights);
-  } else if (typeof accessLevel === 'number') {
+  } if (typeof accessLevel === 'number') {
     return is(accessLevel, userRights);
   } return false;
 }
 
-export function mergeMask<D: string>(dict: Dictionary<D>): (e: Array<D>) => number {
-  return (arr: D[]): number => arr.reduce((A, V) => dict[V] | A, 0);
+export function mergeMask<D: string>(dict: Dictionary<D>): (e: $ReadOnlyArray<D>) => number {
+  return (arr: $ReadOnlyArray<D>): number => arr.reduce((A, V) => dict[V] | A, 0);
 }
 
-function createMask<D: string>(dictionary: Dictionary<D>): (e: D | Array<D>) => number {
+function createMask<D: string>(dictionary: Dictionary<D>): (e: D | $ReadOnlyArray<D>) => number {
   const merge = mergeMask(dictionary);
-  return (element: D | Array<D>): number => {
+  return (element: D | $ReadOnlyArray<D>): number => {
     if (Array.isArray(element)) {
       return merge(element);
     }
@@ -73,7 +86,7 @@ export function createPolicies<D: string>(dict: Dictionary<D>, items: PolycyPara
   return items.map(s => maker(s));
 }
 
-export function makeDictionary<D: string>(arr: Array<D>): Dictionary<D> {
+export function makeDictionary<D: string>(arr: $ReadOnlyArray<D>): Dictionary<D> {
   return arr.reduce((a, e, i) => Object.assign(a, { [e]: 1 << i }), { [arr[0]]: 1 });
 }
 
@@ -82,11 +95,11 @@ export function arrayFilter(restriction: number): (f: { restriction: AccessLevel
 }
 
 export function advancedRights<T: string>(rules: RU<T>): AR<T> {
-  const pa: T[] = Object.keys(rules());
+  const pa: $ReadOnlyArray<T> = Object.keys(rules());
   const dictionary = makeDictionary(pa);
   return {
     dictionary,
-    restriction(...args: mixed[]) {
+    restriction(...args: $ReadOnlyArray<mixed>) {
       const r = rules(...args);
       return pa.reduce((a, v) => ((+r[v]() && dictionary[v]) | a), 0);
     },
